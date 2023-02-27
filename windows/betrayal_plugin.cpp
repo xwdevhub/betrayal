@@ -416,7 +416,10 @@ namespace Betrayal
 
       uint32_t *srcPtr = bytes;
       char *dstPtr = ptrImageData;
-
+      if (!dstPtr) {
+          ReleaseDC(hWnd, dc);
+          return NULL;
+      }
       for (int y = 0; y < height; y++)
       {
         for (int x = 0; x < width; x++)
