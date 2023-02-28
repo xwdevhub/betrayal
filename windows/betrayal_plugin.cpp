@@ -471,7 +471,7 @@ namespace Betrayal
       auto hIcon = CreateIconFromBytes(
           hWnd, width, height, pixels, icon);
 
-      icon->set_image(hIcon, true);
+      icon->set_image(hIcon, false);
       icon->update();
 
       result->Success(flutter::EncodableValue(true));
