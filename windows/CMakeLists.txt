@@ -8,6 +8,7 @@ set(PLUGIN_NAME "betrayal_plugin")
 
 add_library(${PLUGIN_NAME} SHARED
   "betrayal_plugin.cpp"
+  "WinProc.cpp"
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

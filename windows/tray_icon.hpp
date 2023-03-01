@@ -9,13 +9,16 @@
 #include <codecvt>
 #include <map>
 #include <vector>
-
+#include "WinProc.cpp"
+constexpr wchar_t kTrayWindowClassName[] = L"FLUTTER_RUNNER_WIN32_WINDOWS_TRAYU";
 class TrayIcon
 {
 private:
   bool m_is_visible;
   bool m_icon_is_shared;
+  bool tray_class_registered_ = false;;
   std::vector<UINT> m_subbed_events;
+  HWND tray_window_;
 
 public:
   NOTIFYICONDATA data;
@@ -29,10 +32,38 @@ public:
     data.uCallbackMessage = WM_USER + id;
     data.uFlags = NIF_MESSAGE;
     data.uVersion = NOTIFYICON_VERSION_4;
-  };
+    //version let menu closed by blank click
+    HWND window =
+        CreateWindow(GetTrayWindowClass(), nullptr, WS_OVERLAPPEDWINDOW, -1, -1,
+            0, 0, nullptr, nullptr, GetModuleHandle(nullptr), this);
 
+    tray_window_ = window;
+  };
+  const wchar_t* GetTrayWindowClass() {
+      if (!tray_class_registered_) {
+          WNDCLASS window_class{};
+          window_class.hCursor = nullptr;
+          window_class.lpszClassName = kTrayWindowClassName;
+          window_class.style = CS_HREDRAW | CS_VREDRAW;
+          window_class.cbClsExtra = 0;
+          window_class.cbWndExtra = 0;
+          window_class.hInstance = GetModuleHandle(nullptr);
+          window_class.hIcon = nullptr;
+          window_class.hbrBackground = 0;
+          window_class.lpszMenuName = nullptr;
+          window_class.lpfnWndProc = WinProcS::TrayWndProc;
+          RegisterClass(&window_class);
+          tray_class_registered_ = true;
+      }
+
+      return kTrayWindowClassName;
+  }
   ~TrayIcon()
   {
+      if (tray_window_) {
+          DestroyWindow(tray_window_);
+          tray_window_ = nullptr;
+      }
     if (is_visible())
       hide();
     if (!m_icon_is_shared)
