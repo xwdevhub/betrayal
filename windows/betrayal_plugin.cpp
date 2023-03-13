@@ -28,6 +28,7 @@ namespace Betrayal
   {
   public:
     static void RegisterWithRegistrar(flutter::PluginRegistrarWindows *registrar);
+    UINT taskbar_created_message_b = RegisterWindowMessage(L"TaskbarCreated");
 
     BetrayalPlugin(flutter::PluginRegistrarWindows *registrar);
 
@@ -38,6 +39,7 @@ namespace Betrayal
 
     // The ID of the WindowProc delegate registration.
     int window_proc_id = -1;
+    int icon_id = -1;
     IconManager icons;
 
     // Called by the Windows Event Loop
@@ -66,6 +68,12 @@ namespace Betrayal
           return result;
         }
         DefWindowProc(hWnd, message, wParam, lParam);
+      }
+      else if (taskbar_created_message_b == message) {
+          if (icon_id != -1) {
+              icons.get(hWnd, icon_id)->show();
+          }
+
       }
 
       return result;
