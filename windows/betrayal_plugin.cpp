@@ -162,6 +162,7 @@ namespace Betrayal
         WITH_ARGS_HWND_ID
 
         ShowIcon(hWnd, id, std::move(result));
+        icon_id = id;
       }
       else if (method.compare("setTooltip") == 0)
       {
