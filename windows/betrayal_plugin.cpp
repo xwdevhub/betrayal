@@ -14,6 +14,9 @@
 #include <map>
 #include <memory>
 #include <sstream>
+#include <string>
+#include <locale>
+#include <codecvt>
 
 #include "icon_manager.hpp"
 
@@ -337,7 +340,10 @@ namespace Betrayal
     {
       WITH_ICON;
 
-      auto path = std::wstring(filepath.begin(), filepath.end());
+	  std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	  std::wstring convertedStr = converter.from_bytes(filepath);
+
+      auto path = std::wstring(convertedStr.begin(), convertedStr.end());
 
       HICON hIcon = static_cast<HICON>(
           LoadImage(
